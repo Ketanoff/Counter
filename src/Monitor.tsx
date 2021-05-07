@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, useCallback, useEffect} from 'react';
 
 type MonitorPropsType = {
     onClickButtonSetting: () => void
@@ -13,7 +13,7 @@ type MonitorPropsType = {
 
 export function Monitor (props: MonitorPropsType) {
     
-    const changeInitialValue = (e: ChangeEvent<HTMLInputElement>) => {
+    const changeMaxValue = (e: ChangeEvent<HTMLInputElement>) => {
         props.setMaxNumber(e.target.value);
     };
     
@@ -29,12 +29,15 @@ export function Monitor (props: MonitorPropsType) {
     const inputHideStyle = {
         display: props.value ? 'flex' : 'none'
     };
-    const inputErrorInitialStyle = {
+    
+    const inputErrorInitialStyle = useCallback(() => ({
         backgroundColor: +props.minNumber >= +props.maxNumber || +props.minNumber < 0 ? 'lightcoral' : ''
-    };
-    const inputErrorMaxStyle = {
-        backgroundColor: +props.minNumber >= +props.maxNumber || +props.minNumber < 0 ? 'lightcoral' : ''
-    };
+    }), [props.minNumber]);
+    
+    let inputErrorMaxStyle = useCallback(() => ({
+        backgroundColor: +props.minNumber >= +props.maxNumber || +props.maxNumber < 0 ? 'lightcoral' : ''
+    }), [props.maxNumber]);
+    
     const errorMessageHideStyle = {
         display: +props.minNumber >= +props.maxNumber || +props.minNumber < 0 ? '' : 'none'
     };
@@ -42,11 +45,11 @@ export function Monitor (props: MonitorPropsType) {
     return <div className='monitor'>
         <div style={monitorStyle} className='counter'>{props.count}</div>
         <div style={inputHideStyle} className='input'>
-            <input style={inputErrorInitialStyle} value={props.maxNumber}
+            <input style={inputErrorMaxStyle()} value={props.maxNumber}
                    className='input1' type='number'
-                   onChange={changeInitialValue}
+                   onChange={changeMaxValue}
             />
-            <input style={inputErrorMaxStyle} value={props.minNumber}
+            <input style={inputErrorInitialStyle()} value={props.minNumber}
                    className='input2' type='number'
                    onChange={changeStartValue}
             />
