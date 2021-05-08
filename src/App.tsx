@@ -1,30 +1,32 @@
 import React, {useEffect, useState} from 'react';
-import './App.css';
-import {Buttons} from './Buttons';
-import {Monitor} from './Monitor';
+import s from './App.module.css';
+import {CounterMonitor} from './Component/Monitor/CounterMonitor/CounterMonitor';
+import SettingMonitor from './Component/Monitor/SettingMonitor/SettingMonitor';
 
 function App () {
+    
+    let initialMinValue = '0';
+    let initialMaxValue = '5';
+    
+    let [minNumber, setMinNumber] = useState<string>(initialMinValue);
+    let [maxNumber, setMaxNumber] = useState<string>(initialMaxValue);
     let [count, setCount] = useState<string>('0');
-    let [maxNumber, setMaxNumber] = useState<string>('5');
-    let [minNumber, setMinNumber] = useState<string>('0');
-    let [on, setOn] = useState<boolean>(false);
+    let [resetNumber, setResetNumber] = useState<string>(minNumber);
     
     const counter = () => {
         if (+count < +maxNumber) {
             const newCount = +count + 1;
             setCount(newCount.toString());
+            const newReset = (+resetNumber + 1);
+            setResetNumber(newReset.toString());
         }
     };
     
     const reset = () => {
-        
         if (+count !== +minNumber) {
             setCount(minNumber);
+            setResetNumber(minNumber);
         }
-    };
-    
-    const changeSetting = () => {
-        setOn(!on);
     };
     
     useEffect(() => {
@@ -37,9 +39,9 @@ function App () {
                 minNumber = JSON.parse(newInitialCounterValue);
                 setMinNumber(minNumber);
                 setCount(minNumber);
+                setResetNumber(minNumber);
             }
         }
-        
     }, []);
     
     useEffect(() => {
@@ -51,19 +53,17 @@ function App () {
     }, [+minNumber]);
     
     return (
-        <div className='App'>
-            
-            <Monitor count={+count} maxNumber={maxNumber} minNumber={minNumber}
-                     onClickButtonSetting={changeSetting} value={on}
-                     setCount={setCount}
-                     setMaxNumber={setMaxNumber}
-                     setMinNumber={setMinNumber}
+        <div className={s.app}>
+            <CounterMonitor count={+count} maxNumber={maxNumber} minNumber={minNumber}
+                            setCount={setCount} counter={counter} reset={reset}
+                            resetNumber={resetNumber}
             />
-            
-            <Buttons count={count}
-                     onClickButtonReset={reset} onClickButtonCount={counter}
-                     onClickButtonSetting={changeSetting} value={on}
-                     maxNumber={maxNumber} minNumber={minNumber}/>
+            <SettingMonitor setCount={setCount}
+                            maxNumber={maxNumber} minNumber={minNumber}
+                            setMaxNumber={setMaxNumber}
+                            setMinNumber={setMinNumber}
+                            setResetNumber={setResetNumber}
+            />
         </div>
     );
 }
