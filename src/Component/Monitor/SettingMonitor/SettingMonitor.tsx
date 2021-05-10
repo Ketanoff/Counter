@@ -1,76 +1,103 @@
 import React, {ChangeEvent, useCallback, useEffect, useState} from 'react';
 import s from './SettingMonitor.module.css';
 import {Button} from '../../Button/Button';
+import {CounterMonitor} from '../CounterMonitor/CounterMonitor';
 
 type SettingsMonitorPropsType = {
-    setMaxNumber: (value: string) => void
-    setMinNumber: (value: string) => void
-    setResetNumber: (value: string) => void
+    setMaxNumber: (value: number) => void
+    setMinNumber: (value: number) => void
+    setResetNumber: (value: number) => void
     setCount: (value: string) => void
-    maxNumber: string
-    minNumber: string
+    reset: () => void
+    counter: () => void
+    maxNumber: number
+    minNumber: number
+    resetNumber: number
+    count: string
 }
 
 function SettingMonitor (props: SettingsMonitorPropsType) {
     
-    let initialMinValue = props.minNumber;
-    let initialMaxValue = props.maxNumber;
-    
-    let [maxInputNumber, setInputMaxNumber] = useState<string>(initialMaxValue);
-    let [minInputNumber, setInputMinNumber] = useState<string>(initialMinValue);
+    let [minInputNumber, setInputMinNumber] = useState(0);
+    let [maxInputNumber, setInputMaxNumber] = useState(0);
+    let [disableSetButton, setDisableSetButton] = useState(true);
+    let [disableCountButton, setDisableCountButton] = useState(false);
+    let [disableResetButton, setDisableResetButton] = useState(false);
     
     useEffect(() => {
         let newMaxCounterValue = localStorage.getItem('maxCounterValue');
         if (newMaxCounterValue) {
-            maxInputNumber = JSON.parse(newMaxCounterValue);
-            setInputMaxNumber(maxInputNumber);
+            let newMaxInputNumber = JSON.parse(newMaxCounterValue);
+            setInputMaxNumber(newMaxInputNumber);
             let newInitialCounterValue = localStorage.getItem('initialCounterValue');
             if (newInitialCounterValue) {
-                minInputNumber = JSON.parse(newInitialCounterValue);
-                setInputMinNumber(minInputNumber);
+                let newMinInputNumber = JSON.parse(newInitialCounterValue);
+                setInputMinNumber(newMinInputNumber);
             }
         }
     }, []);
     
+    let changeDisableSetButton = disableSetButton || minInputNumber >= maxInputNumber || minInputNumber < 0;
+    
+    let ofDisableSetButton = () => {
+        setDisableSetButton(false);
+        setDisableCountButton(true);
+        setDisableResetButton(true);
+        minInputNumber >= maxInputNumber || minInputNumber < 0 ? props.setCount('Value Error') : props.setCount('Inter Value');
+    };
+    
     const changeMaxValue = (e: ChangeEvent<HTMLInputElement>) => {
         let newMaxValue = e.target.value;
-        setInputMaxNumber(newMaxValue);
+        setInputMaxNumber(+newMaxValue);
     };
     
     const changeStartValue = (e: ChangeEvent<HTMLInputElement>) => {
         let newStartValue = e.target.value;
-        setInputMinNumber(newStartValue);
+        setInputMinNumber(+newStartValue);
     };
     
     const setSetting = () => {
         props.setMinNumber(minInputNumber);
         props.setMaxNumber(maxInputNumber);
-        props.setCount(minInputNumber);
+        props.setCount(minInputNumber.toString());
         props.setResetNumber(minInputNumber);
+        setDisableSetButton(true);
+        setDisableCountButton(false);
+        setDisableResetButton(false);
+        props.setCount(minInputNumber.toString());
     };
     
-    const inputErrorInitialStyle = useCallback(() => ({
-        backgroundColor: +minInputNumber >= +maxInputNumber || +minInputNumber < 0 ? 'lightcoral' : ''
-    }), [minInputNumber]);
+    let resetInputErrorStyle = {
+        backgroundColor: ''
+    };
     
-    let inputErrorMaxStyle = useCallback(() => ({
-        backgroundColor: +minInputNumber >= +maxInputNumber || +maxInputNumber < 0 ? 'lightcoral' : ''
-    }), [maxInputNumber]);
+    let inputErrorInitialStyle = {
+        backgroundColor: minInputNumber >= maxInputNumber || minInputNumber < 0 ? 'lightcoral' : ''
+    };
+    
+    let initialStyle = minInputNumber < maxInputNumber && minInputNumber > 0
+        ? resetInputErrorStyle : inputErrorInitialStyle;
+    
+    let inputErrorMaxStyle = {
+        backgroundColor: minInputNumber >= maxInputNumber || maxInputNumber < 0 ? 'lightcoral' : ''
+    };
+    
+    let maxStyle = minInputNumber < maxInputNumber && maxInputNumber > 0 ? resetInputErrorStyle : inputErrorMaxStyle;
     
     const errorMessageHideStyle = {
-        display: +minInputNumber >= +maxInputNumber || +minInputNumber < 0 ? '' : 'none'
+        display: minInputNumber >= maxInputNumber || minInputNumber < 0 ? '' : 'none'
     };
     
-    return (
+    return <>
         <div className={s.monitor}>
             <div className={s.counter}>
-                <input style={inputErrorMaxStyle()} value={maxInputNumber}
+                <input style={maxStyle} value={maxInputNumber}
                        className={s.input1} type='number'
-                       onChange={changeMaxValue}
+                       onChange={changeMaxValue} onClick={ofDisableSetButton}
                 />
-                <input style={inputErrorInitialStyle()} value={minInputNumber}
+                <input style={initialStyle} value={minInputNumber}
                        className={s.input2} type='number'
-                       onChange={changeStartValue}
+                       onChange={changeStartValue} onClick={ofDisableSetButton}
                 />
                 <p className={s.text1}>Initial value :</p>
                 <p className={s.text2}>Max value :</p>
@@ -78,11 +105,17 @@ function SettingMonitor (props: SettingsMonitorPropsType) {
             </div>
             <div className={s.buttonBlock}>
                 <Button onClickButton={setSetting} title={'Set'}
-                        disableButton={+minInputNumber >= +maxInputNumber || +minInputNumber < 0}
+                        disableButton={changeDisableSetButton}
                 />
             </div>
         </div>
-    );
+        <CounterMonitor counter={props.counter} count={props.count} setCount={props.setCount}
+                        minNumber={props.minNumber} maxNumber={props.maxNumber} resetNumber={props.resetNumber}
+                        reset={props.reset} disableCountButton={disableCountButton}
+                        disableResetButton={disableResetButton} setDisableCountButton={setDisableCountButton}
+                        setDisableResetButton={setDisableResetButton}
+        />
+    </>;
 }
 
 export default SettingMonitor;

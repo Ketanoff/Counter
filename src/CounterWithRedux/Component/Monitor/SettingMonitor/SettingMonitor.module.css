@@ -1,0 +1,74 @@
+.monitor {
+    display: flex;
+    padding: 1rem 0;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 100px;
+    width: 16rem;
+    height: 12rem;
+    background-color: burlywood;
+    margin-left: 5%;
+}
+
+.buttonBlock {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 10%;
+    background-color: #8a791d;
+    width: 80%;
+    height: 30%;
+    border-radius: 8px;
+}
+
+.counter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    width: 80%;
+    height: 60%;
+    border-radius: 8px;
+    background-color: aquamarine;
+}
+
+.text1 {
+    margin-right: 132px;
+    margin-top: 2%;
+    position: absolute;
+    color: #151615;
+    font-size: x-small;
+    font-weight: bold;
+}
+
+.text2 {
+    margin-right: 8%;
+    margin-bottom: 4%;
+    position: absolute;
+    color: #151615;
+    font-size: x-small;
+    font-weight: bold;
+}
+
+.errorMessage {
+    margin-right: 3%;
+    margin-top: 6%;
+    position: absolute;
+    color: red;
+    font-weight: bold;
+
+}
+
+.input1 {
+    width: 20%;
+    margin: 0 30px;
+    font-weight: bold;
+    border-radius: 7px;
+}
+
+.input2 {
+    width: 20%;
+    margin: 15px 30px;
+    font-weight: bold;
+    border-radius: 7px;
+}
