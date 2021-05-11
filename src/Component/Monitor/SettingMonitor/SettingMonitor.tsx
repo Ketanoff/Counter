@@ -37,15 +37,6 @@ function SettingMonitor (props: SettingsMonitorPropsType) {
         }
     }, []);
     
-    let changeDisableSetButton = disableSetButton || minInputNumber >= maxInputNumber || minInputNumber < 0;
-    
-    let ofDisableSetButton = () => {
-        setDisableSetButton(false);
-        setDisableCountButton(true);
-        setDisableResetButton(true);
-        minInputNumber >= maxInputNumber || minInputNumber < 0 ? props.setCount('Value Error') : props.setCount('Inter Value');
-    };
-    
     const changeMaxValue = (e: ChangeEvent<HTMLInputElement>) => {
         let newMaxValue = e.target.value;
         setInputMaxNumber(+newMaxValue);
@@ -56,6 +47,14 @@ function SettingMonitor (props: SettingsMonitorPropsType) {
         setInputMinNumber(+newStartValue);
     };
     
+    let ofDisableSetButton = () => {
+        setDisableSetButton(false);
+        setDisableCountButton(true);
+        setDisableResetButton(true);
+        minInputNumber >= maxInputNumber || minInputNumber < 0 ?
+            props.setCount('Value Error') : props.setCount('Inter Value');
+    };
+    
     const setSetting = () => {
         props.setMinNumber(minInputNumber);
         props.setMaxNumber(maxInputNumber);
@@ -64,28 +63,34 @@ function SettingMonitor (props: SettingsMonitorPropsType) {
         setDisableSetButton(true);
         setDisableCountButton(false);
         setDisableResetButton(false);
-        props.setCount(minInputNumber.toString());
     };
+    
+    let changeDisableSetButton = disableSetButton || minInputNumber >= maxInputNumber
+        || minInputNumber < 0;
     
     let resetInputErrorStyle = {
         backgroundColor: ''
     };
     
     let inputErrorInitialStyle = {
-        backgroundColor: minInputNumber >= maxInputNumber || minInputNumber < 0 ? 'lightcoral' : ''
+        backgroundColor: minInputNumber >= maxInputNumber || minInputNumber < 0 ?
+            'lightcoral' : ''
     };
     
     let initialStyle = minInputNumber < maxInputNumber && minInputNumber > 0
         ? resetInputErrorStyle : inputErrorInitialStyle;
     
     let inputErrorMaxStyle = {
-        backgroundColor: minInputNumber >= maxInputNumber || maxInputNumber < 0 ? 'lightcoral' : ''
+        backgroundColor: minInputNumber >= maxInputNumber || maxInputNumber < 0 ?
+            'lightcoral' : ''
     };
     
-    let maxStyle = minInputNumber < maxInputNumber && maxInputNumber > 0 ? resetInputErrorStyle : inputErrorMaxStyle;
+    let maxStyle = minInputNumber < maxInputNumber && maxInputNumber > 0 ?
+        resetInputErrorStyle : inputErrorMaxStyle;
     
     const errorMessageHideStyle = {
-        display: minInputNumber >= maxInputNumber || minInputNumber < 0 ? '' : 'none'
+        display: minInputNumber >= maxInputNumber || minInputNumber < 0 ?
+            '' : 'none'
     };
     
     return <>
@@ -110,9 +115,10 @@ function SettingMonitor (props: SettingsMonitorPropsType) {
             </div>
         </div>
         <CounterMonitor counter={props.counter} count={props.count} setCount={props.setCount}
-                        minNumber={props.minNumber} maxNumber={props.maxNumber} resetNumber={props.resetNumber}
-                        reset={props.reset} disableCountButton={disableCountButton}
-                        disableResetButton={disableResetButton} setDisableCountButton={setDisableCountButton}
+                        minNumber={props.minNumber} maxNumber={props.maxNumber} reset={props.reset}
+                        resetNumber={props.resetNumber} disableCountButton={disableCountButton}
+                        disableResetButton={disableResetButton}
+                        setDisableCountButton={setDisableCountButton}
                         setDisableResetButton={setDisableResetButton}
         />
     </>;

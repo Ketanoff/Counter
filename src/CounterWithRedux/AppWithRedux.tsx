@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import s from '../App.module.css';
-import {CounterMonitor} from '../CounterWithRedux/Component/Monitor/CounterMonitor/CounterMonitor';
+import SettingMonitorWithRedux from './Component/Monitor/SettingMonitor/SettingsMonitorWithRedux';
 
 function AppWithRedux () {
     
     return (
         <div className={s.app}>
-            <CounterMonitor/>
+            <SettingMonitorWithRedux/>
         </div>
     );
 }
